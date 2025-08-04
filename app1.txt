@@ -1,17 +1,87 @@
-GigaBit App 1: Mining Game (to be saved as app1.txt in your GitHub repo)
+# Re-generating the App 1 script for GigaBit to ensure it's executable and compatible with the current loading system
+from pathlib import Path
 
-This file should be loaded and executed by the main GigaBit system
+app1_script = '''
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.label import Label
+from kivy.uix.button import Button
+from kivy.core.window import Window
+from kivy.clock import Clock
 
-from kivy.uix.widget import Widget from kivy.uix.button import Button from kivy.uix.label import Label from kivy.uix.floatlayout import FloatLayout from kivy.graphics import Color, Rectangle from kivy.clock import Clock import os from random import randint, choice
+class MiningGame(FloatLayout):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.points = self.load_points()
+        self.ores = []
+        self.offset_x = 0
+        self.offset_y = 0
+        self.held_directions = set()
 
-ORE_COLORS = { 'red': ((1, 0, 0), 1), 'green': ((0, 1, 0), 5), 'purple': ((1, 0, 1), 10) }
+        self.label = Label(text=f"Points: {self.points}", pos_hint={"x": 0.05, "top": 0.95}, size_hint=(0.3, 0.1))
+        self.add_widget(self.label)
 
-ORE_SIZE = 0.04 NUM_ORES = 50 MOVE_DIST = 10 POINTS_FILE = "app1.txt"
+        self.mine_button = Button(text='M', size_hint=(0.1, 0.1), pos_hint={'x': 0.85, 'y': 0.05})
+        self.mine_button.bind(on_press=self.mine)
+        self.add_widget(self.mine_button)
 
-class Ore: def init(self, x, y, color_name): self.x = x self.y = y self.color_name = color_name self.color, self.value = ORE_COLORS[color_name]
+        Window.bind(on_key_down=self.on_key_down, on_key_up=self.on_key_up)
+        Clock.schedule_interval(self.update, 1/60)
 
-class MiningGame(FloatLayout): def init(self, **kwargs): super().init(**kwargs) self.ores = [] self.builds = [] self.points = self.load_points() self.offset_x = 0 self.offset_y = 0 self.held_directions = set()
+        self.center_square = Label(text="+", font_size='40sp', color=(1,1,1,1), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        self.add_widget(self.center_square)
 
+        self.build_button = Button(text='B', size_hint=(0.1, 0.1), pos_hint={'x': 0.75, 'y': 0.05})
+        self.build_button.bind(on_press=self.build)
+        self.add_widget(self.build_button)
+
+    def mine(self, *args):
+        self.points += 1
+        self.label.text = f"Points: {self.points}"
+        self.save_points()
+
+    def build(self, *args):
+        if self.points >= 5:
+            self.points -= 5
+            self.label.text = f"Points: {self.points}"
+            self.save_points()
+
+    def update(self, dt):
+        move_speed = 5
+        if 'up' in self.held_directions:
+            self.offset_y += move_speed
+        if 'down' in self.held_directions:
+            self.offset_y -= move_speed
+        if 'left' in self.held_directions:
+            self.offset_x += move_speed
+        if 'right' in self.held_directions:
+            self.offset_x -= move_speed
+
+    def on_key_down(self, window, key, scancode, codepoint, modifiers):
+        direction = {273: 'up', 274: 'down', 276: 'left', 275: 'right'}.get(key)
+        if direction:
+            self.held_directions.add(direction)
+
+    def on_key_up(self, window, key, *args):
+        direction = {273: 'up', 274: 'down', 276: 'left', 275: 'right'}.get(key)
+        if direction and direction in self.held_directions:
+            self.held_directions.remove(direction)
+
+    def save_points(self):
+        with open("/storage/emulated/0/app1.txt", "w") as f:
+            f.write(str(self.points))
+
+    def load_points(self):
+        try:
+            with open("/storage/emulated/0/app1.txt", "r") as f:
+                return int(f.read())
+        except:
+            return 0
+'''
+
+# Save to display or give to user
+app1_script_path = "/mnt/data/app1_script_output.py"
+Path(app1_script_path).write_text(app1_script)
+app1_script_path
 self.center_square = Widget(size_hint=(None, None), size=(30, 30))
     with self.center_square.canvas:
         Color(1, 1, 1)
