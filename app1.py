@@ -44,8 +44,13 @@ class MiningGame(FloatLayout):
         self.add_widget(self.center_square)
         self.bind(size=self.update_center_square)
 
-        self.points_label = Label(text=f"Points: {self.points}", size_hint=(0.3, 0.1),
-                                  pos_hint={"right": 1.0, "top": 1.0}, font_size='20sp', color=(1, 1, 1, 1))
+        self.points_label = Label(
+            text=f"Points: {self.points}",
+            size_hint=(0.3, 0.1),
+            pos_hint={"right": 1.0, "top": 1.0},
+            font_size='20sp',
+            color=(1, 1, 1, 1)
+        )
         self.add_widget(self.points_label)
 
         self.mine_button = Button(text="M", size_hint=(0.1, 0.1), pos_hint={"right": 0.98, "y": 0.15}, font_size='20sp')
@@ -155,4 +160,16 @@ class MiningGame(FloatLayout):
     def build(self, instance):
         if self.points >= BUILD_COST:
             self.points -= BUILD_COST
-            self.builds.append((self.offset
+            self.builds.append((self.offset_x, self.offset_y))
+            self.points_label.text = f"Points: {self.points}"
+            self.save_points()
+
+def main():
+    from kivy.app import App
+    class TempWrapper(App):
+        def build(self):
+            return MiningGame()
+    TempWrapper().run()
+
+if __name__ == "__main__":
+    main()
