@@ -20,12 +20,14 @@ BUILD_COST = 5
 BUILD_COLOR = (0.5, 0.5, 0.5)
 POINTS_FILE = os.path.join(os.getcwd(), "app1.py")
 
+
 class Ore:
     def __init__(self, x, y, color_name):
         self.x = x
         self.y = y
         self.color_name = color_name
         self.color, self.value = ORE_COLORS[color_name]
+
 
 class MiningGame(FloatLayout):
     def __init__(self, **kwargs):
@@ -54,6 +56,10 @@ class MiningGame(FloatLayout):
         self.build_button = Button(text="B", size_hint=(0.1, 0.1), pos_hint={"right": 0.98, "y": 0.28}, font_size='20sp')
         self.build_button.bind(on_press=self.build)
         self.add_widget(self.build_button)
+
+        self.home_button = Button(text="Home", size_hint=(0.15, 0.1), pos_hint={"x": 0.02, "top": 0.98}, font_size='16sp')
+        self.home_button.bind(on_press=self.go_home)
+        self.add_widget(self.home_button)
 
         directions = {
             'up': {"center_x": 0.15, "center_y": 0.25},
@@ -157,6 +163,11 @@ class MiningGame(FloatLayout):
             self.builds.append((self.offset_x, self.offset_y))
             self.points_label.text = f"Points: {self.points}"
             self.save_points()
+
+    def go_home(self, instance):
+        from kivy.app import App
+        App.get_running_app().go_home()
+
 
 def main(*args):
     from kivy.app import App
