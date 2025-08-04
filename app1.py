@@ -169,9 +169,15 @@ class MiningGame(FloatLayout):
         App.get_running_app().go_home()
 
 
-def main(*args):
+def main(system=None):
     from kivy.app import App
     class TempWrapper(App):
         def build(self):
+            self.system = system
             return MiningGame()
+
+        def go_home(self):
+            if self.system:
+                self.system.go_home()
+
     TempWrapper().run()
