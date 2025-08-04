@@ -18,7 +18,7 @@ NUM_ORES = 50
 MOVE_DIST = 10
 BUILD_COST = 5
 BUILD_COLOR = (0.5, 0.5, 0.5)
-POINTS_FILE = os.path.join(os.getcwd(), "app1.py")
+POINTS_FILE = os.path.join(os.getcwd(), "app1.txt")
 
 
 class Ore:
@@ -30,8 +30,9 @@ class Ore:
 
 
 class MiningGame(FloatLayout):
-    def __init__(self, **kwargs):
+    def __init__(self, system_ref, **kwargs):
         super().__init__(**kwargs)
+        self.system = system_ref
         self.ores = []
         self.builds = []
         self.points = self.load_points()
@@ -56,10 +57,6 @@ class MiningGame(FloatLayout):
         self.build_button = Button(text="B", size_hint=(0.1, 0.1), pos_hint={"right": 0.98, "y": 0.28}, font_size='20sp')
         self.build_button.bind(on_press=self.build)
         self.add_widget(self.build_button)
-
-        self.home_button = Button(text="Home", size_hint=(0.15, 0.1), pos_hint={"x": 0.02, "top": 0.98}, font_size='16sp')
-        self.home_button.bind(on_press=self.go_home)
-        self.add_widget(self.home_button)
 
         directions = {
             'up': {"center_x": 0.15, "center_y": 0.25},
@@ -164,20 +161,8 @@ class MiningGame(FloatLayout):
             self.points_label.text = f"Points: {self.points}"
             self.save_points()
 
-    def go_home(self, instance):
-        from kivy.app import App
-        App.get_running_app().go_home()
 
-
-def main(system=None):
-    from kivy.app import App
-    class TempWrapper(App):
-        def build(self):
-            self.system = system
-            return MiningGame()
-
-        def go_home(self):
-            if self.system:
-                self.system.go_home()
-
-    TempWrapper().run()
+def main(system):
+    app_widget = MiningGame(system_ref=system)
+    system.active_app_widget = app_widget
+    system.add_widget(app_widget)
