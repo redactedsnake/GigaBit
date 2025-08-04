@@ -18,8 +18,7 @@ NUM_ORES = 50
 MOVE_DIST = 10
 BUILD_COST = 5
 BUILD_COLOR = (0.5, 0.5, 0.5)
-POINTS_FILE = os.path.join(os.getcwd(), "app1.py")
-
+POINTS_FILE = os.path.join(os.getcwd(), "app1.txt")
 
 class Ore:
     def __init__(self, x, y, color_name):
@@ -27,7 +26,6 @@ class Ore:
         self.y = y
         self.color_name = color_name
         self.color, self.value = ORE_COLORS[color_name]
-
 
 class MiningGame(FloatLayout):
     def __init__(self, **kwargs):
@@ -46,7 +44,8 @@ class MiningGame(FloatLayout):
         self.add_widget(self.center_square)
         self.bind(size=self.update_center_square)
 
-        self.points_label = Label(text=f"Points: {self.points}", size_hint=(0.3, 0.1), pos_hint={"right": 1.0, "top": 1.0}, font_size='20sp', color=(1, 1, 1, 1))
+        self.points_label = Label(text=f"Points: {self.points}", size_hint=(0.3, 0.1),
+                                  pos_hint={"right": 1.0, "top": 1.0}, font_size='20sp', color=(1, 1, 1, 1))
         self.add_widget(self.points_label)
 
         self.mine_button = Button(text="M", size_hint=(0.1, 0.1), pos_hint={"right": 0.98, "y": 0.15}, font_size='20sp')
@@ -56,10 +55,6 @@ class MiningGame(FloatLayout):
         self.build_button = Button(text="B", size_hint=(0.1, 0.1), pos_hint={"right": 0.98, "y": 0.28}, font_size='20sp')
         self.build_button.bind(on_press=self.build)
         self.add_widget(self.build_button)
-
-        self.home_button = Button(text="Home", size_hint=(0.15, 0.1), pos_hint={"x": 0.02, "top": 0.98}, font_size='16sp')
-        self.home_button.bind(on_press=self.go_home)
-        self.add_widget(self.home_button)
 
         directions = {
             'up': {"center_x": 0.15, "center_y": 0.25},
@@ -160,23 +155,4 @@ class MiningGame(FloatLayout):
     def build(self, instance):
         if self.points >= BUILD_COST:
             self.points -= BUILD_COST
-            self.builds.append((self.offset_x, self.offset_y))
-            self.points_label.text = f"Points: {self.points}"
-            self.save_points()
-
-    def go_home(self, instance):
-        from kivy.app import App
-        App.get_running_app().root.clear_widgets()
-        App.get_running_app().root.add_widget(App.get_running_app().home_screen)
-
-
-def main():
-    from kivy.app import App
-    class TempWrapper(App):
-        def build(self):
-            return MiningGame()
-    TempWrapper().run()
-
-
-if __name__ == "__main__":
-    main()
+            self.builds.append((self.offset
